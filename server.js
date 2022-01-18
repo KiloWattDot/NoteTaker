@@ -14,13 +14,24 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// routes
+// GET request routes
 app.get('/index', (req, res) => { 
   res.sendFile(path.join(__dirname, 'public/index.html'))
 })
 
 app.get('/notes', (req, res) => { 
   res.sendFile(path.join(__dirname, 'public/notes.html'))
+})
+
+// Post request route 
+app.post('/api/notes', (req, res) => {
+// retrieve response or note, then push to the db of notes
+// Then return the entire db of notes including the new note that was just added
+
+
+  
+
+
 })
 
 
