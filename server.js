@@ -100,13 +100,11 @@ app.post("/api/notes",  (req, res) => {
 
 // GET NEW db 
 app.get("/api/notes",  (req, res) => {
-  readFromFile('./').then((err,notes => {
-    err 
-    ? console.error(err)
-    : res.json(JSON.parse(notes))
-      
-  })
-  )
+  res.sendFile(path.join(__dirname, "/db/db.json"));
+  console.log(`${req.method} received`)
+
+  
+  
 
 });
 
