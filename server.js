@@ -1,42 +1,175 @@
+console.log("Program start")
 
-// import express
 
-const express = require('express');
-const path = require('path');
-const app = express(); 
-const notes = require('./db/db.json')
+const express = require("express");
+const path = require("path");
+const fs = require("fs")
+const util = require('util');
 
+const uuid = require('./helpers/uuid');
+
+// Sets up the Express App
+// =============================================================
+const app = express();
 const PORT = process.env.PORT || 3001;
 
-// static folder
-app.use(express.static('public'));
-
-app.use(express.json());
+// MIDDLEWARE
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static("public"));
 
-// GET request routes
-app.get('/index', (req, res) => { 
-  res.sendFile(path.join(__dirname, 'public/index.html'))
-})
 
-app.get('/notes', (req, res) => { 
-  res.sendFile(path.join(__dirname, 'public/notes.html'))
-})
+// HTML Routes
+// =============================================================
 
-// Post request route 
-app.post('/api/notes', (req, res) => {
-// retrieve response or note, then push to the db of notes
-// Then return the entire db of notes including the new note that was just added
+// GET FETCH REQUEST
+// INDEX ROUTE
+  app.get("/",  (req, res) => {
+    res.sendFile(path.join(__dirname, "/public/index.html"));
+    console.log(`${req.method} received`)
+  });
 
+// ==================================FUNCTIONS TO CREATE READ-AND-APPEND FUNCTION==============================================
+
+const readFromFile = util.promisify(fs.readFile);
+  /**
+ *  Function to write notes to the JSON file given a destination and some content
+ *  @param {string} destination The file you want to write to.
+ *  @param {object} content The content you want to write to the file.
+ *  @returns {void} Nothing
+ */
+const writeToFile = (destination, content) =>
+fs.writeFile(destination, JSON.stringify(content, null, 4), (err) =>
+  err ? console.error(err) : console.info(`\nnotes written to ${destination}`)
+);
+
+/**
+*  Function to read notes from a given a file and append some content
+*  @param {object} content The content you want to append to the file.
+*  @param {string} file The path to the file you want to save to.
+*  @returns {void} Nothing
+*/
+const readAndAppend = (content, file) => {
+fs.readFile(file, 'utf8', (err, notes) => {
+  if (err) {
+    console.error(err);
+  } else {
+    const parsedNotes = JSON.parse(notes);
+    parsedNotes.push(content);
+    writeToFile(file, parsedNotes);
+  }
+});
+};
+
+// =======================================END OF READ-AND-APPEND FUNCTIONS=======================================================
+
+// NOTES ROUTE - load html
+  app.get("/notes",  (req, res) => {
+    res.sendFile(path.join(__dirname, "/public/notes.html"));
+    console.log(`${req.method} received`)
+
+  });
 
   
 
+// POST FETCH REQUEST - Grab user input
+app.post("/api/notes",  (req, res) => {
 
-})
+  console.info(`${req.method} request received`);
+
+      // Destructuring assignment for the items in req.body
+      const { title, text } = req.body;
+
+     
+      if (req.body) {   
+        const newNote = {
+          title,
+          text,
+          id: uuid(),
+        };
+      
+    
+
+        readAndAppend(newNote, './db/db.json');
+          res.json(`Note added successfully 🚀`);
+      } else {
+          res.error('Error in adding note');
+      }
+  
+});
+
+// GET NEW db 
+app.get("/api/notes",  (req, res) => {
+  readFromFile('./').then((err,notes => {
+    err 
+    ? console.error(err)
+    : res.json(JSON.parse(notes))
+      
+  })
+  )
+
+});
 
 
 
+app.delete("/api/notes/:id", function (req, res) {
 
-app.listen(PORT, () =>
-  console.log(`Example app listening at http://localhost:${PORT}`)
+  
+  console.info(`${req.method} request received`);
+  const { title, text } = req.body;
+     
+  if (req.body) {   
+    const newNote = {
+      title,
+      text,
+      id: uuid(),
+    };
+  
+  const noteId = JSON.parse(req.params.id)
+  console.log(noteId)
+  notes = notes.filter(val => val.id !== noteId)
+  
+  
+  readAndAppend(newNote, './db/db.json');
+  res.json(`Note added successfully 🚀`);
+} else {
+  res.error('Error in adding note');
+}
+
+});
+
+app.put("/api/notes/:id", function (req, res) {
+
+  
+  console.info(`${req.method} request received`);
+  const { title, text } = req.body;
+     
+  if (req.body) {   
+    const newNote = {
+      title,
+      text,
+      id: uuid(),
+    };
+  
+  const noteId = JSON.parse(req.params.id)
+  console.log(noteId)
+  notes = notes.filter(val => val.id !== noteId)
+  
+  
+  readAndAppend(newNote, './db/db.json');
+  res.json(`Note added successfully 🚀`);
+} else {
+  res.error('Error in adding note');
+}
+
+});
+  
+
+
+                
+  
+// Starts the server to begin listening
+// =============================================================
+app.listen(PORT, () => 
+  console.log(`App listening at http://localhost:${PORT} 🚀`)
 );

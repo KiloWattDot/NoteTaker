@@ -4,9 +4,7 @@ let saveNoteBtn;
 let newNoteBtn;
 let noteList;
 
-
-
-if (window.location.pathname === './notes.html') {
+if (window.location.pathname === '/notes') {
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');
   saveNoteBtn = document.querySelector('.save-note');
@@ -183,4 +181,3 @@ if (window.location.pathname === '/notes') {
 }
 
 getAndRenderNotes();
-
