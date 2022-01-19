@@ -77,6 +77,7 @@ app.delete("/api/notes/:id", function (req, res) {
   })
 })
 
+
 app.put("/api/notes/:id", function(req, res) {
   const noteId = JSON.parse(req.params.id)
   console.log(noteId)

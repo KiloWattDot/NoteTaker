@@ -80,12 +80,13 @@ app.post("/api/notes",  (req, res) => {
       // Destructuring assignment for the items in req.body
       const { title, text } = req.body;
 
-     
+      // var id = notes[notes.length - 1].id + 1
+
       if (req.body) {   
         const newNote = {
           title,
           text,
-          id: uuid(),
+          id: uuid() 
         };
       
     
@@ -100,11 +101,12 @@ app.post("/api/notes",  (req, res) => {
 
 // GET NEW db 
 app.get("/api/notes",  (req, res) => {
+ 
   res.sendFile(path.join(__dirname, "/db/db.json"));
   console.log(`${req.method} received`)
 
   
-  
+
 
 });
 
@@ -112,27 +114,39 @@ app.get("/api/notes",  (req, res) => {
 
 app.delete("/api/notes/:id", function (req, res) {
 
+  console.log('server delete')
   
   console.info(`${req.method} request received`);
-  const { title, text } = req.body;
+ 
+  const id  =  req.params.id
+
      
-  if (req.body) {   
-    const newNote = {
-      title,
-      text,
-      id: uuid(),
-    };
   
-  const noteId = JSON.parse(req.params.id)
-  console.log(noteId)
-  notes = notes.filter(val => val.id !== noteId)
+  const noteId = id
+
+  // console.log(noteId)
+  // notes = notes.filter(val => val.id !== noteId)
   
-  
-  readAndAppend(newNote, './db/db.json');
-  res.json(`Note added successfully 🚀`);
-} else {
-  res.error('Error in adding note');
-}
+  fs.readFile(__dirname + "/db/db.json", 'utf8', function (error, notes) {
+    if (error) {
+      return console.log(error)
+    } else { 
+      notes = JSON.parse(notes)
+
+    notes = notes.filter(val => val.id !== noteId)
+
+    }
+    // notes = JSON.parse(notes)
+
+    // notes = notes.filter(val => val.id !== noteId)
+
+    fs.writeFile(__dirname + "/db/db.json", JSON.stringify(notes), function (error, data) {
+      if (error) {
+        return error
+      }
+      res.json(notes)
+    })
+  })
 
 });
 
@@ -146,7 +160,7 @@ app.put("/api/notes/:id", function (req, res) {
     const newNote = {
       title,
       text,
-      id: uuid(),
+      id
     };
   
   const noteId = JSON.parse(req.params.id)
@@ -154,7 +168,7 @@ app.put("/api/notes/:id", function (req, res) {
   notes = notes.filter(val => val.id !== noteId)
   
   
-  readAndAppend(newNote, './db/db.json');
+  write(newNote, './db/db.json');
   res.json(`Note added successfully 🚀`);
 } else {
   res.error('Error in adding note');
