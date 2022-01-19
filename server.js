@@ -6,7 +6,7 @@ const path = require("path");
 const fs = require("fs")
 const util = require('util');
 
-const uuid = require('./helpers/uuid');
+const uuid = require('./getID/uuid');
 
 // Sets up the Express App
 // =============================================================

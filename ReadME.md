@@ -18,7 +18,10 @@
   * express, util, uuid
 
   ## Usage
-  In order to use this app, undefined
+   Notes Added
+    <img src="Notespage.png">
+    Note Deleted [Morning Routine]
+    <img src="Notespage-deleted.png"> 
   
   ## License
   MIT
